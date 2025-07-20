@@ -1,0 +1,132 @@
+/* Estilo base del cuerpo */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+/* Para que siempre mantenga altura completa */
+html, body {
+  height: 100%;
+}
+
+/* Estilo del contenedor principal de la app */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Estilo del navbar */
+nav {
+  background-color: #111;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Estilo para el input de búsqueda */
+nav .busqueda {
+  display: flex;
+  align-items: center;
+}
+
+nav .busqueda input {
+  padding: 5px;
+  margin-right: 5px;
+}
+
+/* Contenedor general de cada sección */
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Para asegurar que formularios estén igual de centrados */
+.form-wrapper {
+  max-width: 500px;
+  margin: 2rem auto;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Título centrado */
+h2 {
+  text-align: center;
+}
+
+/* Estilo para campos de entrada */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin: 4px 0 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Estilo de botón */
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo para errores */
+.error {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+/* Estilo de footer si se usa */
+footer {
+  text-align: center;
+  margin-top: 30px;
+  font-weight: bold;
+}
+
+footer span {
+  font-size: 20px;
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Evaluación Final</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/vue@3"></script>
+  <style>
+    body {
+      background-color: #f4f4f4;
+    }
+
+    .form-wrapper {
+      max-width: 500px;
+      margin: 2rem auto;
+      background-color: #f4f4f4;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+
+    .btn-outline-light {
+      border: none !important;
+      box-shadow: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar navbar-dark bg-dark px-4">
+      <div class="container-fluid d-flex justify-content-between align-items-center w-100">
+        <a class="navbar-brand mb-0 h1" href="#">Evaluación Final</a>
+        <div class="mx-auto position-absolute start-50 translate-middle-x d-flex gap-2">
+          <button class="btn btn-outline-light" @click="pestana='notas'">Cálculo de calificaciones</button>
+          <button class="btn btn-outline-light" @click="pestana='registro'">Formulario de registro</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Página Notas -->
+      <div v-if="pestana === 'notas'" class="form-wrapper">
+        <h2 class="mb-4">Cálculo de calificaciones</h2>
+        <form @submit.prevent="calcularPromedio">
+          <div class="mb-3">
+            <label>Nota 1:</label>
+            <input v-model.number="nota1" type="number" class="form-control" required />
+            <div class="error" v-if="nota1 < 10 || nota1 > 70">La Nota 1 debe estar entre 10 y 70.</div>
+          </div>
+
+          <div class="mb-3">
+            <label>Nota 2:</label>
+            <input v-model.number="nota2" type="number" class="form-control" required />
+            <div class="error" v-if="nota2 < 10 || nota2 > 70">La Nota 2 debe estar entre 10 y 70.</div>
+          </div>
+
+          <div class="mb-3">
+            <label>Nota 3:</label>
+            <input v-model.number="nota3" type="number" class="form-control" required />
+            <div class="error" v-if="nota3 < 10 || nota3 > 70">La Nota 3 debe estar entre 10 y 70.</div>
+          </div>
+
+          <div class="mb-3">
+            <label>Asistencia (%):</label>
+            <input v-model.number="asistencia" type="number" class="form-control" required />
+            <div class="error" v-if="asistencia < 0 || asistencia > 100">La asistencia debe estar entre 0% y 100%.</div>
+          </div>
+
+          <button class="btn btn-success w-100" type="submit">Calcular</button>
+
+          <div class="text-danger mt-2" v-if="mensajeError">
+            {{ mensajeError }}
+          </div>
+
+          <div v-if="resultado" class="alert mt-3" :class="aprobado ? 'alert-success' : 'alert-danger'">
+            {{ resultado }}
+          </div>
+        </form>
+      </div>
+
+      <!-- Página Registro -->
+      <div v-if="pestana === 'registro'" class="form-wrapper">
+        <h2 class="mb-4">Formulario de registro</h2>
+        <form @submit.prevent="validarRegistro">
+          <div class="mb-3">
+            <label>Nombre:</label>
+            <input v-model="registro.nombre" type="text" class="form-control" required />
+            <div class="error" v-if="registro.nombre === ''">El campo nombre es requerido</div>
+            <div class="error" v-if="registro.nombre && !validarNombre()">Solo se permiten letras y espacios</div>
+          </div>
+
+          <div class="mb-3">
+            <label>Correo:</label>
+            <input v-model="registro.correo" type="email" class="form-control" required />
+            <div class="error" v-if="!validarCorreo()">Formato de correo no válido</div>
+          </div>
+
+          <div class="mb-3">
+            <label>Contraseña:</label>
+            <input v-model="registro.pass1" type="password" class="form-control" required />
+            <div class="error" v-if="registro.pass1 === ''">El campo contraseña es requerido</div>
+          </div>
+
+          <div class="mb-3">
+            <label>Repetir Contraseña:</label>
+            <input v-model="registro.pass2" type="password" class="form-control" required />
+            <div class="error" v-if="registro.pass2 === ''">El campo repetir contraseña es requerido</div>
+            <div class="error" v-if="registro.pass1 !== registro.pass2 && registro.pass2 !== ''">Las contraseñas no coinciden</div>
+          </div>
+
+          <button class="btn btn-success w-100" type="submit">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        return {
+          pestana: 'notas',
+          nota1: '',
+          nota2: '',
+          nota3: '',
+          asistencia: '',
+          resultado: '',
+          aprobado: false,
+          mensajeError: '',
+          registro: {
+            nombre: '',
+            correo: '',
+            pass1: '',
+            pass2: ''
+          }
+        };
+      },
+      methods: {
+        calcularPromedio() {
+          if (
+            this.nota1 < 10 || this.nota1 > 70 ||
+            this.nota2 < 10 || this.nota2 > 70 ||
+            this.nota3 < 10 || this.nota3 > 70 ||
+            this.asistencia < 0 || this.asistencia > 100
+          ) {
+            this.mensajeError = 'Por favor, ingrese valores válidos para las notas y la asistencia.';
+            this.resultado = '';
+            return;
+          }
+
+          this.mensajeError = '';
+          const promedio = (this.nota1 * 0.35 + this.nota2 * 0.35 + this.nota3 * 0.30).toFixed(2);
+
+          if (promedio >= 40 && this.asistencia >= 80) {
+            this.resultado = `Tu promedio es: ${promedio}. Tu estado es: Aprobado 🎉`;
+            this.aprobado = true;
+          } else {
+            this.resultado = `Tu promedio es: ${promedio}. Tu estado es: Reprobado 😔`;
+            this.aprobado = false;
+          }
+        },
+        validarNombre() {
+          // Solo letras (mayúsculas, minúsculas) y espacios
+          return /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/.test(this.registro.nombre);
+        },
+        validarCorreo() {
+          const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return regex.test(this.registro.correo);
+        },
+        validarRegistro() {
+          if (
+            this.registro.nombre === '' ||
+            this.registro.correo === '' ||
+            this.registro.pass1 === '' ||
+            this.registro.pass2 === ''
+          ) {
+            alert('Todos los campos son obligatorios.');
+            return;
+          }
+          if (!this.validarNombre()) {
+            alert('El nombre solo puede contener letras y espacios.');
+            return;
+          }
+          if (!this.validarCorreo()) {
+            alert('Formato de correo inválido.');
+            return;
+          }
+          if (this.registro.pass1 !== this.registro.pass2) {
+            alert('Las contraseñas no coinciden.');
+            return;
+          }
+          alert('El registro se ha realizado correctamente');
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
